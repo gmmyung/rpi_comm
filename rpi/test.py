@@ -1,3 +1,4 @@
+from xml.etree.ElementTree import tostring
 import websocket
 import _thread
 import time
@@ -24,6 +25,9 @@ if __name__ == "__main__":
                               on_close=on_close)
 
     ws.run_forever(dispatcher=rel)  # Set dispatcher to automatic reconnection
+
+    i = 0
     while True:
-        ws.send("Hello, World!")
-        time.sleep(1)
+        ws.send(str(i))
+        # time.sleep(0.01)
+        i += 1
