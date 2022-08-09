@@ -1,23 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import Graph from './Graph';
+import React from 'react';
+import { useState, useEffect } from 'react';
+
 
 function App() {
+
+  const [wsconnected, setWsconnected] = useState(false);
+  const [data, setData] = useState([]);
+
+  const initWs = () => {
+    let ws = new WebSocket('ws://localhost:4000/ws');
+    ws.onopen = function (event) {
+      console.log('connected');
+      setWsconnected(true);
+      ws.send('web');
+    }
+    ws.onmessage = function (event) {
+      console.log(event.data);
+      setData((prev) => [...prev, JSON.parse(event.data)]);
+    }
+    ws.onclose = function (event) {
+      console.log('disconnected');
+      setWsconnected(false);
+    }
+  }
+
+  useEffect(initWs, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {wsconnected ? <Graph data={data} /> : 
+      <div>Loading...
+        <button onClick={initWs}>Reload</button>
+      </div>
+        }
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import express from 'express';
-import {WebSocketServer} from 'ws';
+import { WebSocketServer } from 'ws';
+
+var data = [];
 
 function createServer() {
     const app = express();
@@ -8,8 +10,8 @@ function createServer() {
         res.sendFile('./index.html');
     });
 
-    const HTTPServer = app.listen(3000, () => {
-        console.log("Server is open at port:3000");
+    const HTTPServer = app.listen(4000, () => {
+        console.log("Server is open at port:4000");
     });
 
     const webSocketServer = new WebSocketServer(
@@ -22,11 +24,22 @@ function createServer() {
     webSocketServer.on('connection', (ws) => {
         console.log("Connected");
         ws.on('message', (message) => {
-            console.log(message.toString());
+            if (message.toString().split(' ')[0] === "python") {
+                ws.send("You are a python");
+                
+                data.push(JSON.parse(message.toString().split(' ')[1]));
+                console.log(data);
+            } 
         });
+        // let initialTime = Date.now()
+        // setInterval(() => {
+        //     let timeoffset = Date.now() - initialTime;
+        // ws.send(`{ "name": ${timeoffset}, "pv": ${timeoffset}}`);
+        // console.log("sent");
+        // }, 1000);
     });
 
-    return app;
+    return webSocketServer;
 }
 
 export default createServer;
