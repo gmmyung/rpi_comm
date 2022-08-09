@@ -1,13 +1,11 @@
-import {LineChart, Line, CartesianGrid} from 'recharts'
 import React from 'react'
+import Plot from 'react-plotly.js';
 
 
 function Graph(props) {
+    console.log(props.data);
     return (
-    <LineChart width={600} height={300} data={props.data}>
-        <Line type="linear" dataKey="pv" stroke="#8884d8" isAnimationActive={false}/>
-        <CartesianGrid stroke="#ccc" />
-    </LineChart>
+    <Plot data={[props.data]} layout={{width: 500, height: 500, title: 'My Plot'}}/>
     )
 }
 

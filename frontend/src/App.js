@@ -7,7 +7,12 @@ import { useState, useEffect } from 'react';
 function App() {
 
   const [wsconnected, setWsconnected] = useState(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({
+    x: [],
+    y: [],
+    type: 'scatter',
+    mode: 'lines+markers'
+  });
 
   const initWs = () => {
     let ws = new WebSocket('ws://localhost:4000/ws');
@@ -18,7 +23,15 @@ function App() {
     }
     ws.onmessage = function (event) {
       console.log(event.data);
-      setData((prev) => [...prev, JSON.parse(event.data)]);
+      let new_data = JSON.parse(event.data);
+      setData(prev => {
+        return {
+          x: [...prev.x, ...new_data.x],
+          y: [...prev.y, ...new_data.y],
+          type: prev.type,
+          mode: prev.mode
+        }
+      });
     }
     ws.onclose = function (event) {
       console.log('disconnected');

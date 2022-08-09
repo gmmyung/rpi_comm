@@ -2,8 +2,10 @@ from xml.etree.ElementTree import tostring
 import websocket
 import _thread
 import threading
+import json 
 import time
 import rel
+import random
 
 def on_message(ws, message):
     print("message received")
@@ -33,9 +35,13 @@ if __name__ == "__main__":
     # rel.signal(2, rel.abort)  # Keyboard Interrupt
     # rel.dispatch()
     i = 0
-    printit = lambda : {
-        threading.Timer(1, printit).start(),
-            ws.send("python {\"name\":0,\"pv\":0}"),
-            print("sent python " + str(i))
-        }
+    def printit():
+        global i
+        threading.Timer(0.1, printit).start(),
+        send = {"x": i, "y": random.randint(0, 100)}
+        send = json.dumps(send)
+        ws.send("python " + send);
+        i += 1;
+        print("sent python " + str(i));
+
     printit()
